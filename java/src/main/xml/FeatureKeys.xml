@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features> 
+  <feature>
+    <featureCode>1</featureCode>
+    <name>TEST_FEATURE</name>
+    <type>boolean</type>
+    <uri>http://saxon.sf.net/feature/test-feature</uri>
+    <editions>HE PE EE</editions>
+    <platforms>J</platforms>
+  </feature>
+</features>

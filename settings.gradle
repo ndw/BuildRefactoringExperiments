@@ -1,0 +1,5 @@
+rootProject.name = 'Saxon'
+include('java:he')
+include('java:pe')
+include('java:ee')
+include('java:keys')
