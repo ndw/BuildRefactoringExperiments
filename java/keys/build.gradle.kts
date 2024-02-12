@@ -2,7 +2,6 @@ import kotlin.text.Charsets.UTF_8
 import com.saxonica.build.SaxonBuild
 
 plugins {
-  id("java-library")
   id("com.saxonica.build.saxon-build")
 }
 
@@ -13,12 +12,20 @@ repositories {
 }
 
 val transform by configurations.creating
+val javaSources by configurations.creating
+
+val featureKeys by configurations.creating {
+  isCanBeConsumed = true
+  isCanBeResolved = false
+  extendsFrom(configurations["javaSources"])
+}
 
 dependencies {
   transform("net.sf.saxon:Saxon-HE:12.4")
+  javaSources(files(layout.buildDirectory.dir("java")))
 }
 
-val featureKeys = tasks.register<JavaExec>("featureKeys") {
+val featureKeysTask = tasks.register<JavaExec>("featureKeys") {
   inputs.dir(layout.projectDirectory.dir("../src/main/xml"))
   inputs.dir(layout.projectDirectory.dir("tools"))
   outputs.dir(layout.buildDirectory.dir("java"))
@@ -33,10 +40,13 @@ val featureKeys = tasks.register<JavaExec>("featureKeys") {
   }
 }
 
-sourceSets {
-  main {
-    java {
-      srcDir(featureKeys)
-    }
-  }
+// See: https://github.com/gradle/gradle/issues/27578
+configurations.named("featureKeys") {
+    outgoing
+        .artifacts
+        .find { it.name == "java" }
+        ?.apply {
+            this as ConfigurablePublishArtifact
+            builtBy(featureKeysTask)
+        }
 }

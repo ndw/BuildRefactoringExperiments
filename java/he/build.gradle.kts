@@ -22,7 +22,9 @@ val preprocessor by configurations.creating {
 
 dependencies {
   heSourcesBucket(project(":java", "mainSourceElements"))
-  featureKeysBucket(project(":java:keys", "mainSourceElements"))
+
+  featureKeysBucket(project(mapOf("path" to ":java:keys",
+                                  "configuration" to "featureKeys")))
 
   compileOnly("org.apache.ws.commons.axiom:axiom:1.2.15")
   compileOnly("org.apache.ws.commons.axiom:axiom-dom:1.2.15")
@@ -55,7 +57,6 @@ val preprocessJava = tasks.register("preprocessJava") {
   inputs.files(heSources)
   inputs.files(featureKeysSources)
   outputs.dir(layout.buildDirectory.dir("src"))
-  outputs.dir(layout.buildDirectory.dir("tmp/filtered"))
 
   doLast {
     copy {
@@ -109,5 +110,8 @@ sourceSets {
 tasks.register("helloWorld") {
   doLast {
     println("Hello, world.")
+    files(featureKeysSources).asFileTree.map {
+      println("F: ${it}")
+    }
   }
 }
